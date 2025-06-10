@@ -41,11 +41,11 @@
             
             #custom-scroll-percent {
                 position: fixed;
-                bottom: 8px;
+                bottom: 5px;
                 left: 10px;
                 background: rgba(0, 0, 0, 0.85);
                 color: white;
-                padding: 6px 12px;
+                padding: 3px 6px;
                 border-radius: 16px;
                 font-size: 12px;
                 z-index: 999999;
@@ -95,11 +95,16 @@
     };
 
     const getColorByPercent = (percent) => {
-        if (percent > 85) return 'linear-gradient(90deg, #e53e3e, #c53030)';
-        if (percent > 60) return 'linear-gradient(90deg, #ff9800, #f57c00)';
-        if (percent > 30) return 'linear-gradient(90deg, #2196f3, #1976d2)';
-        return 'linear-gradient(90deg, #4caf50, #45a049)';
-    };
+    if (percent >= 95) return 'linear-gradient(90deg, #b71c1c, #f44336)';      // قرمز تند
+    if (percent >= 85) return 'linear-gradient(90deg, #e53935, #ef5350)';      // قرمز گرم
+    if (percent >= 70) return 'linear-gradient(90deg, #fb8c00, #ffa726)';      // نارنجی
+    if (percent >= 55) return 'linear-gradient(90deg, #fdd835, #fbc02d)';      // زرد
+    if (percent >= 40) return 'linear-gradient(90deg, #4caf50, #388e3c)';      // سبز متوسط
+    if (percent >= 25) return 'linear-gradient(90deg, #00acc1, #0097a7)';      // آبی فیروزه‌ای
+    if (percent >= 10) return 'linear-gradient(90deg, #2196f3, #1976d2)';      // آبی
+    return 'linear-gradient(90deg, #8e24aa, #6a1b9a)';                         // بنفش (شروع یا کم)
+};
+
 
     const updateScrollProgress = () => {
         if (!progressBar || !percentText) return;
