@@ -715,13 +715,10 @@ class AnnotationApp {
     }
 }
 
-// --- کد مربوط به استایل‌ها و فونت‌ها و نوار پیشرفت اسکرول بدون تغییر باقی می‌ماند ---
-const localCSS = document.createElement("link");
-localCSS.rel = "stylesheet";
-localCSS.href = "./note.css";
-document.head.appendChild(localCSS);
-
-const googleFont = document.createElement("link");
-googleFont.rel = "stylesheet";
-googleFont.href = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200";
-document.head.appendChild(googleFont);
+// --- کد فعال‌سازی خودکار ---
+// صبر کن تا تمام محتوای صفحه بارگذاری شود
+document.addEventListener("DOMContentLoaded", function() {
+  // به صورت خودکار یک نمونه از برنامه را برای کل صفحه (body) ایجاد کن
+  new AnnotationApp("body");
+  console.log("AnnotationApp has been auto-initialized on the body.");
+});
