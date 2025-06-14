@@ -1,7 +1,6 @@
 /**
- * Content Protection Module v2.2 - AnnotationApp Compatible & No Warnings
- * A professional content protection library against copying and screenshots.
- * Modified to be compatible with AnnotationApp and with warning popups removed.
+ * Content Protection Module v2.3 - iFrame Fix & AnnotationApp Compatible
+ * Final version with iFrame false-positive detection fixed.
  */
 
 (function(global) {
@@ -15,7 +14,6 @@
                 disableKeyboardShortcuts: true,
                 disableDevTools: true,
                 blurOnFocus: true,
-                // showWarnings is now effectively false
                 warningMessage: 'این محتوا محافظت شده است!',
                 redirectUrl: null,
                 autoInit: true,
@@ -203,7 +201,13 @@
         }
 
         setupDevToolsDetection() {
+            // FIX: If inside an iframe, do not run DevTools detection at all.
+            if (window.self !== window.top) {
+                return; 
+            }
+
             if (!this.config.disableDevTools) return;
+            
             const threshold = 160;
             const detect = () => {
                 const heightDiff = window.outerHeight - window.innerHeight;
@@ -256,8 +260,6 @@
             setInterval(clearAndWarn, 2000);
         }
         
-        // The showWarning function has been completely removed.
-
         getStatus() {
             return {
                 textSelection: this.config.disableTextSelection,
