@@ -275,6 +275,3 @@
     };
 
 })();
-
-// security
-document.addEventListener("keydown",e=>{const f=["a","c","s","p","u"];if((e.ctrlKey||e.metaKey)&&f.includes(e.key.toLowerCase()))e.preventDefault();if(e.key==="F12")e.preventDefault();if(e.ctrlKey&&e.shiftKey){const k=e.key.toLowerCase();if(k==="i"||k==="j"||k==="c")e.preventDefault();}});document.addEventListener("contextmenu",e=>e.preventDefault());
