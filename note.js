@@ -190,9 +190,9 @@ class AnnotationApp {
 
     _createToolbar() {
         const icons = {
-            [AnnotationApp.TOOL_PEN]: '<span class="material-symbols-outlined">stylus_note</span>',
-            [AnnotationApp.TOOL_HIGHLIGHTER]: '<span class="material-symbols-outlined">format_ink_highlighter</span>',
-            [AnnotationApp.TOOL_ERASER]: '<span class="material-symbols-outlined">ink_eraser</span>',
+            [AnnotationApp.TOOL_PEN]: `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m499-287 335-335-52-52-335 335zm-261 87q-100-5-149-42T40-349q0-65 53.5-105.5T242-503q39-3 58.5-12.5T320-542q0-26-29.5-39T193-600l7-80q103 8 151.5 41.5T400-542q0 53-38.5 83T248-423q-64 5-96 23.5T120-349q0 35 28 50.5t94 18.5zm280 7L353-358l382-382q20-20 47.5-20t47.5 20l70 70q20 20 20 47.5T900-575zm-159 33q-17 4-30-9t-9-30l33-159 165 165z"/></svg>`,
+            [AnnotationApp.TOOL_HIGHLIGHTER]: `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M80 0v-160h800V0zm504-480L480-584 320-424l103 104zm-47-160 103 103 160-159-104-104zm-84-29 216 216-189 190q-24 24-56.5 24T367-263l-27 23H140l126-125q-24-24-25-57.5t23-57.5zm0 0 187-187q24-24 56.5-24t56.5 24l104 103q24 24 24 56.5T857-640L669-453z"/></svg>`,
+            [AnnotationApp.TOOL_ERASER]: `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M690-240h190v80H610zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160zm296-80 314-322-198-198-442 456 64 64zm-6-240"/></svg>`,
         };
 
         this.masterAnnotationToggleBtn = this._createToolbarButton("masterAnnotationToggleBtn", "NOTE - فعال/غیرفعال کردن یادداشت‌برداری", "NOTE ✏️", "");
