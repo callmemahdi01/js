@@ -10,7 +10,6 @@ class AnnotationApp {
     constructor(targetContainerSelector) {
         this.targetContainer = document.querySelector(targetContainerSelector);
         if (!this.targetContainer) return;
-
         this._ensureRelativePosition();
         this._initializeProperties();
         this._initializeStorageKey();
@@ -29,18 +28,13 @@ class AnnotationApp {
         this.HIGHLIGHTER_OPACITY = 0.4;
         this.TWO_FINGER_TAP_TIMEOUT = 300;
 
-        this.canvas = null;
-        this.ctx = null;
-        this.committedCanvas = null;
-        this.committedCtx = null;
+        this.canvas = null; this.ctx = null;
+        this.committedCanvas = null; this.committedCtx = null;
         this.virtualCanvasContainer = null;
 
-        this.viewportWidth = 0;
-        this.viewportHeight = 0;
-        this.scrollOffsetX = 0;
-        this.scrollOffsetY = 0;
-        this.totalWidth = 0;
-        this.totalHeight = 0;
+        this.viewportWidth = 0; this.viewportHeight = 0;
+        this.scrollOffsetX = 0; this.scrollOffsetY = 0;
+        this.totalWidth = 0; this.totalHeight = 0;
 
         this.isDrawing = false;
         this.noteModeActive = false;
@@ -59,15 +53,12 @@ class AnnotationApp {
 
         this.interactionState = AnnotationApp.INTERACTION_STATE_IDLE;
         this.touchStartTimestamp = 0;
-        this.panStartFinger1 = null;
-        this.panStartFinger2 = null;
-        this.lastPanMidX = null;
-        this.lastPanMidY = null;
+        this.panStartFinger1 = null; this.panStartFinger2 = null;
+        this.lastPanMidX = null; this.lastPanMidY = null;
         this.initialTouchMidPoint = null;
         this.twoFingerTapProcessedInCurrentSequence = false;
 
         this._lastDimensions = { w: 0, h: 0, sx: 0, sy: 0, tw: 0, th: 0 };
-        this._dirtyRegion = null;
     }
 
     _initializeStorageKey() {
@@ -112,14 +103,6 @@ class AnnotationApp {
     createCanvases() {
         this.canvas = document.createElement("canvas");
         this.canvas.id = "annotationCanvas";
-        Object.assign(this.canvas.style, {
-            position: "absolute",
-            top: "0",
-            left: "0",
-            zIndex: "1000",
-            pointerEvents: "none",
-            mixBlendMode: "multiply"
-        });
         this.virtualCanvasContainer.appendChild(this.canvas);
         this.ctx = this.canvas.getContext("2d");
 
@@ -147,20 +130,13 @@ class AnnotationApp {
     }
 
     _createMasterToggleButton() {
-        this.masterAnnotationToggleBtn = this._createStyledButton("masterAnnotationToggleBtn", "NOTE - فعال/غیرفعال کردن یادداشت‌برداری", "NOTE ✏️", "");
-        Object.assign(this.masterAnnotationToggleBtn.style, { top: "5px", right: "5px" });
+        this.masterAnnotationToggleBtn = this._createStyledButton("masterAnnotationToggleBtn", "NOTE - فعال/غیرفعال کردن یادداشت‌برداری", "NOTE ✏️");
         this.targetContainer.appendChild(this.masterAnnotationToggleBtn);
     }
 
     _createToolsPanel() {
         this.toolsPanel = document.createElement("div");
         this.toolsPanel.id = "annotationToolsPanel";
-        Object.assign(this.toolsPanel.style, {
-            display: "none",
-            flexDirection: "column",
-            top: "45px",
-            right: "5px"
-        });
     }
 
     _createToolButtons() {
@@ -188,31 +164,13 @@ class AnnotationApp {
         this[lineWidthContainerRefName] = document.createElement('div');
         this[lineWidthContainerRefName].className = 'line-width-slider-container';
         this[lineWidthContainerRefName].title = `برای تغییر ضخامت ${titleSuffix}، بکشید`;
-        Object.assign(this[lineWidthContainerRefName].style, {
-            display: 'flex',
-            alignItems: 'center',
-            cursor: 'ew-resize',
-            padding: '2px 5px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            userSelect: 'none'
-        });
-
         const lessThanSpan = document.createElement('span');
         lessThanSpan.textContent = '<';
-        lessThanSpan.className = 'line-width-arrow';
-        lessThanSpan.style.margin = '0 1px';
-        
         this[lineWidthDisplayRefName] = document.createElement('span');
         this[lineWidthDisplayRefName].className = 'line-width-value-display';
         this[lineWidthDisplayRefName].textContent = this[lineWidthPropName];
-        Object.assign(this[lineWidthDisplayRefName].style, { textAlign: 'center', fontWeight: 'bold' });
-        
         const greaterThanSpan = document.createElement('span');
         greaterThanSpan.textContent = '>';
-        greaterThanSpan.className = 'line-width-arrow';
-        greaterThanSpan.style.margin = '0 1px';
-
         this[lineWidthContainerRefName].append(lessThanSpan, this[lineWidthDisplayRefName], greaterThanSpan);
         settingsGroup.append(colorLabel, this[colorPickerRefName], lineWidthLabel, this[lineWidthContainerRefName]);
         this.toolsPanel.appendChild(settingsGroup);
@@ -235,51 +193,40 @@ class AnnotationApp {
     }
 
     _addDragLogic(element, setterCallback, getterCallback, min, max, sensitivityFactor = 10) {
-        let isDragging = false;
-        let startX;
-        let startValue;
-        
+        let isDragging = false, startX, startValue;
         const onDragStart = (clientX) => {
             isDragging = true;
             startX = clientX;
             startValue = getterCallback();
             element.classList.add('dragging');
-            document.body.style.cursor = 'ew-resize';
         };
-        
         const onDragMove = (clientX) => {
             if (!isDragging) return;
             const deltaX = clientX - startX;
             const newValue = Math.round(startValue + (deltaX / sensitivityFactor));
             setterCallback(newValue);
         };
-        
         const onDragEnd = () => {
             if (!isDragging) return;
             isDragging = false;
             element.classList.remove('dragging');
-            document.body.style.cursor = 'default';
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('touchmove', handleTouchMove);
             document.removeEventListener('touchend', handleTouchEnd);
             document.removeEventListener('touchcancel', handleTouchEnd);
         };
-        
         const handleMouseDown = (e) => {
             e.preventDefault();
             onDragStart(e.clientX);
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
         };
-        
         const handleMouseMove = (e) => {
             e.preventDefault();
             onDragMove(e.clientX);
         };
-        
         const handleMouseUp = () => onDragEnd();
-        
         const handleTouchStart = (e) => {
             if (e.touches.length === 1) {
                 e.preventDefault();
@@ -289,22 +236,19 @@ class AnnotationApp {
                 document.addEventListener('touchcancel', handleTouchEnd);
             }
         };
-        
         const handleTouchMove = (e) => {
             if (e.touches.length === 1) {
                 e.preventDefault();
                 onDragMove(e.touches[0].clientX);
             }
         };
-        
         const handleTouchEnd = () => onDragEnd();
-        
         element.addEventListener('mousedown', handleMouseDown);
         element.addEventListener('touchstart', handleTouchStart, { passive: false });
     }
 
     _createClearButton() {
-        this.clearBtn = this._createStyledButton("clearAnnotationsBtn", "پاک کردن تمام یادداشت‌ها", "پاک کردن همه", "");
+        this.clearBtn = this._createStyledButton("clearAnnotationsBtn", "پاک کردن تمام یادداشت‌ها", "پاک کردن همه");
         this.toolsPanel.appendChild(this.clearBtn);
     }
 
@@ -317,24 +261,22 @@ class AnnotationApp {
     }
 
     updateVirtualCanvas() {
-        const dimensionsChanged = this._calculateAndUpdateDimensions();
-        if (dimensionsChanged) this._resizeCanvases();
+        if (this._calculateAndUpdateDimensions()) this._resizeCanvases();
         this.renderVisibleCanvasRegion();
     }
 
     _calculateAndUpdateDimensions() {
-        const oldDims = this._lastDimensions;
+        const old = this._lastDimensions;
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
         this.scrollOffsetX = window.pageXOffset || document.documentElement.scrollLeft;
         this.scrollOffsetY = window.pageYOffset || document.documentElement.scrollTop;
         this.totalWidth = Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, this.targetContainer.scrollWidth);
         this.totalHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, this.targetContainer.scrollHeight);
-        
-        const changed = oldDims.w !== this.viewportWidth || oldDims.h !== this.viewportHeight || 
-                       oldDims.sx !== this.scrollOffsetX || oldDims.sy !== this.scrollOffsetY || 
-                       oldDims.tw !== this.totalWidth || oldDims.th !== this.totalHeight;
-        
+
+        const changed = old.w !== this.viewportWidth || old.h !== this.viewportHeight ||
+                        old.sx !== this.scrollOffsetX || old.sy !== this.scrollOffsetY ||
+                        old.tw !== this.totalWidth || old.th !== this.totalHeight;
         if (changed) {
             this._lastDimensions = {
                 w: this.viewportWidth, h: this.viewportHeight,
@@ -342,7 +284,6 @@ class AnnotationApp {
                 tw: this.totalWidth, th: this.totalHeight
             };
         }
-        
         return changed;
     }
 
@@ -350,7 +291,7 @@ class AnnotationApp {
         this.canvas.width = this.viewportWidth;
         this.canvas.height = this.viewportHeight;
         Object.assign(this.canvas.style, { width: `${this.viewportWidth}px`, height: `${this.viewportHeight}px` });
-        
+
         if (this.committedCanvas.width !== this.totalWidth || this.committedCanvas.height !== this.totalHeight) {
             this.committedCanvas.width = this.totalWidth;
             this.committedCanvas.height = this.totalHeight;
@@ -361,18 +302,18 @@ class AnnotationApp {
     addEventListeners() {
         window.addEventListener("resize", this._boundUpdateVirtualCanvas);
         window.addEventListener("scroll", this._boundUpdateVirtualCanvas);
-        
-        const touchOptions = { passive: false };
-        this.canvas.addEventListener("touchstart", this._handleTouchStart.bind(this), touchOptions);
-        this.canvas.addEventListener("touchmove", this._handleTouchMove.bind(this), touchOptions);
-        this.canvas.addEventListener("touchend", this._handleTouchEnd.bind(this), touchOptions);
-        this.canvas.addEventListener("touchcancel", this._handleTouchEnd.bind(this), touchOptions);
-        
+
+        const touchOpts = { passive: false };
+        this.canvas.addEventListener("touchstart", this._handleTouchStart.bind(this), touchOpts);
+        this.canvas.addEventListener("touchmove", this._handleTouchMove.bind(this), touchOpts);
+        this.canvas.addEventListener("touchend", this._handleTouchEnd.bind(this), touchOpts);
+        this.canvas.addEventListener("touchcancel", this._handleTouchEnd.bind(this), touchOpts);
+
         this.canvas.addEventListener("mousedown", this._handleMouseStart.bind(this));
         this.canvas.addEventListener("mousemove", this._handleMouseMove.bind(this));
         this.canvas.addEventListener("mouseup", this._handleMouseEnd.bind(this));
         this.canvas.addEventListener("mouseleave", (e) => this._handleMouseEnd(e, true));
-        
+
         this._addUIEventListeners();
     }
 
@@ -384,43 +325,40 @@ class AnnotationApp {
         this.clearBtn.addEventListener("click", () => this.clearAllAnnotations());
     }
 
-    _handleMouseStart(event) {
-        if (!this.noteModeActive || event.button !== 0) return;
-        event.preventDefault();
+    _handleMouseStart(evt) {
+        if (!this.noteModeActive || evt.button !== 0) return;
+        evt.preventDefault();
         this.isDrawing = true;
-        const { x, y } = this._getEventCoordinates(event);
+        const { x, y } = this._getEventCoordinates(evt);
         this.currentPath = this._createNewDrawingPath(x, y);
     }
 
-    _handleMouseMove(event) {
+    _handleMouseMove(evt) {
         if (!this.isDrawing || !this.noteModeActive) return;
-        event.preventDefault();
-        const { x, y } = this._getEventCoordinates(event);
+        evt.preventDefault();
+        const { x, y } = this._getEventCoordinates(evt);
         if (this.currentPath) {
             this._updateCurrentDrawingPath(x, y);
             this._requestRenderFrameForLivePath();
         }
     }
 
-    _handleMouseEnd(event, mouseLeftCanvas = false) {
-        if (!this.isDrawing && !mouseLeftCanvas) return;
+    _handleMouseEnd(evt, leftCanvas = false) {
+        if (!this.isDrawing && !leftCanvas) return;
         if (this.isDrawing) {
             this._cancelRenderFrame();
-            if (this.currentPath && this.currentPath.points.length > 0) {
+            if (this.currentPath && this.currentPath.points.length) {
                 this._processAndCommitCompletedPath();
             }
             this._resetDrawingStateAndClearLivePath();
         }
-        if (mouseLeftCanvas) {
-            this._resetDrawingStateAndClearLivePath();
-        }
+        if (leftCanvas) this._resetDrawingStateAndClearLivePath();
     }
 
-    _handleTouchStart(event) {
+    _handleTouchStart(evt) {
         if (!this.noteModeActive) return;
-        event.preventDefault();
-        const touches = event.touches;
-        
+        evt.preventDefault();
+        const touches = evt.touches;
         if (touches.length === 1) {
             if (this.interactionState === AnnotationApp.INTERACTION_STATE_PANNING) return;
             this.interactionState = AnnotationApp.INTERACTION_STATE_DRAWING;
@@ -440,11 +378,10 @@ class AnnotationApp {
         }
     }
 
-    _handleTouchMove(event) {
+    _handleTouchMove(evt) {
         if (!this.noteModeActive) return;
-        event.preventDefault();
-        const touches = event.touches;
-        
+        evt.preventDefault();
+        const touches = evt.touches;
         if (this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING && touches.length === 1) {
             const { x, y } = this._getEventCoordinates(touches[0]);
             if (this.currentPath) {
@@ -470,22 +407,18 @@ class AnnotationApp {
         }
     }
 
-    _handleTouchEnd(event) {
+    _handleTouchEnd(evt) {
         if (!this.noteModeActive) return;
-        const touches = event.touches;
-        
+        const touches = evt.touches;
         if (this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING) {
             if (touches.length === 0) {
                 this._cancelRenderFrame();
-                if (this.currentPath && this.currentPath.points.length > 0) {
-                    this._processAndCommitCompletedPath();
-                }
+                if (this.currentPath && this.currentPath.points.length) this._processAndCommitCompletedPath();
                 this._resetDrawingStateAndClearLivePath();
                 this.interactionState = AnnotationApp.INTERACTION_STATE_IDLE;
             }
         } else if (this.interactionState === AnnotationApp.INTERACTION_STATE_MULTI_TOUCH_START) {
-            const timeElapsed = Date.now() - this.touchStartTimestamp;
-            if (timeElapsed < this.TWO_FINGER_TAP_TIMEOUT && !this.twoFingerTapProcessedInCurrentSequence) {
+            if (Date.now() - this.touchStartTimestamp < this.TWO_FINGER_TAP_TIMEOUT && !this.twoFingerTapProcessedInCurrentSequence) {
                 this.undoLastDrawing();
                 this.twoFingerTapProcessedInCurrentSequence = true;
             }
@@ -499,7 +432,6 @@ class AnnotationApp {
                 this._resetTouchPanState();
             }
         }
-        
         if (touches.length === 0) {
             this.interactionState = AnnotationApp.INTERACTION_STATE_IDLE;
             this._resetTouchPanState();
@@ -609,26 +541,20 @@ class AnnotationApp {
 
     _processAndCommitCompletedPath() {
         if (!this.currentPath || this.currentPath.points.length === 0) return;
-        
         if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER) this._finalizeHighlighterPath();
-        
-        if (this.currentTool === AnnotationApp.TOOL_ERASER) {
-            this.eraseStrokesUnderCurrentPath();
-        } else {
-            if (this.currentPath.points.length > 1 || 
-                (this.currentPath.points.length === 1 && this.currentTool !== AnnotationApp.TOOL_HIGHLIGHTER)) {
+
+        if (this.currentTool === AnnotationApp.TOOL_ERASER) this.eraseStrokesUnderCurrentPath();
+        else {
+            if (this.currentPath.points.length > 1 || (this.currentPath.points.length === 1 && this.currentTool !== AnnotationApp.TOOL_HIGHLIGHTER)) {
                 this.drawings.push(this.currentPath);
-            } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER && 
+            } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER &&
                        this.currentPath.points.length === 2 &&
                        this.currentPath.points[0].x === this.currentPath.points[1].x &&
                        this.currentPath.points[0].y === this.currentPath.points[1].y) {
-                // Skip single click highlighter
-            } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER && 
-                       this.currentPath.points.length > 0) {
+            } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER && this.currentPath.points.length > 0) {
                 this.drawings.push(this.currentPath);
             }
         }
-        
         this.redrawCommittedDrawings();
         this.saveDrawings();
     }
@@ -641,44 +567,38 @@ class AnnotationApp {
     }
 
     _distToSegmentSquared(p, v, w) {
-        const l2 = Math.pow(v.x - w.x, 2) + Math.pow(v.y - w.y, 2);
-        if (l2 === 0) return Math.pow(p.x - v.x, 2) + Math.pow(p.y - v.y, 2);
+        const l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
+        if (l2 === 0) return (p.x - v.x) ** 2 + (p.y - v.y) ** 2;
         let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
         t = Math.max(0, Math.min(1, t));
-        const projectionX = v.x + t * (w.x - v.x);
-        const projectionY = v.y + t * (w.y - v.y);
-        return Math.pow(p.x - projectionX, 2) + Math.pow(p.y - projectionY, 2);
+        const px = v.x + t * (w.x - v.x);
+        const py = v.y + t * (w.y - v.y);
+        return (p.x - px) ** 2 + (p.y - py) ** 2;
     }
 
     eraseStrokesUnderCurrentPath() {
-        if (!this.currentPath || this.currentPath.points.length === 0 || this.currentPath.tool !== AnnotationApp.TOOL_ERASER) return;
-
+        if (!this.currentPath || !this.currentPath.points.length || this.currentPath.tool !== AnnotationApp.TOOL_ERASER) return;
         const eraserPathPoints = this.currentPath.points;
         const drawingsToDelete = new Set();
-        const eraserRadiusSquared = Math.pow(this.eraserWidth / 2, 2);
+        const threshold = (this.eraserWidth / 2);
 
         for (const drawing of this.drawings) {
             if (drawing.tool === AnnotationApp.TOOL_ERASER || drawingsToDelete.has(drawing)) continue;
+            const points = drawing.points;
+            if (points.length < 1) continue;
+            const collisionThresholdSq = (threshold + drawing.lineWidth / 2) ** 2;
 
-            const drawnPathPoints = drawing.points;
-            if (drawnPathPoints.length < 1) continue;
-
-            const collisionThresholdSquared = Math.pow((this.eraserWidth / 2) + (drawing.lineWidth / 2), 2);
-
-            for (const eraserPt of eraserPathPoints) {
-                if (drawnPathPoints.length === 1) {
-                    const distSq = Math.pow(drawnPathPoints[0].x - eraserPt.x, 2) + Math.pow(drawnPathPoints[0].y - eraserPt.y, 2);
-                    if (distSq < collisionThresholdSquared) {
+            for (const ep of eraserPathPoints) {
+                if (points.length === 1) {
+                    const distSq = (points[0].x - ep.x) ** 2 + (points[0].y - ep.y) ** 2;
+                    if (distSq < collisionThresholdSq) {
                         drawingsToDelete.add(drawing);
                         break;
                     }
                 } else {
-                    for (let i = 0; i < drawnPathPoints.length - 1; i++) {
-                        const p1 = drawnPathPoints[i];
-                        const p2 = drawnPathPoints[i + 1];
-                        const distSq = this._distToSegmentSquared(eraserPt, p1, p2);
-
-                        if (distSq < collisionThresholdSquared) {
+                    for (let i = 0; i < points.length - 1; i++) {
+                        const distSq = this._distToSegmentSquared(ep, points[i], points[i + 1]);
+                        if (distSq < collisionThresholdSq) {
                             drawingsToDelete.add(drawing);
                             break;
                         }
@@ -687,50 +607,39 @@ class AnnotationApp {
                 if (drawingsToDelete.has(drawing)) break;
             }
         }
-
         if (drawingsToDelete.size > 0) {
-            this.drawings = this.drawings.filter(drawing => !drawingsToDelete.has(drawing));
+            this.drawings = this.drawings.filter(d => !drawingsToDelete.has(d));
         }
     }
 
     redrawCommittedDrawings() {
         this.committedCtx.clearRect(0, 0, this.committedCanvas.width, this.committedCanvas.height);
-        for (const path of this.drawings) {
-            this._drawSinglePathOnContext(path, this.committedCtx, false);
-        }
+        for (const path of this.drawings) this._drawSinglePathOnContext(path, this.committedCtx, false);
     }
 
     renderVisibleCanvasRegion() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
         if (this.committedCanvas.width > 0 && this.committedCanvas.height > 0) {
             this.ctx.drawImage(this.committedCanvas,
                 this.scrollOffsetX, this.scrollOffsetY, this.viewportWidth, this.viewportHeight,
                 0, 0, this.viewportWidth, this.viewportHeight);
         }
-        
         if (this.currentPath && (this.isDrawing || this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING)) {
             this._drawSinglePathOnContext(this.currentPath, this.ctx, true);
         }
     }
 
-    _drawSinglePathOnContext(path, context, isLivePathOnViewport = false) {
-        if (!path || path.points.length === 0) return;
-        
+    _drawSinglePathOnContext(path, context, isLive) {
+        if (!path || !path.points.length) return;
         const originalGCO = context.globalCompositeOperation;
         const originalGA = context.globalAlpha;
-        
         this._setupDrawingContextStyle(path, context);
-        
-        if (path.tool === AnnotationApp.TOOL_ERASER && 
-            !((this.isDrawing || this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING) && path === this.currentPath)) {
+        if (path.tool === AnnotationApp.TOOL_ERASER && !((this.isDrawing || this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING) && path === this.currentPath)) {
             context.globalCompositeOperation = originalGCO;
             context.globalAlpha = originalGA;
             return;
         }
-        
-        this._drawPathPointsOnContext(path, context, isLivePathOnViewport);
-        
+        this._drawPathPointsOnContext(path, context, isLive);
         context.globalCompositeOperation = originalGCO;
         context.globalAlpha = originalGA;
     }
@@ -739,45 +648,39 @@ class AnnotationApp {
         context.beginPath();
         context.lineCap = "round";
         context.lineJoin = "round";
-        
+
         let gco = 'source-over';
         let alpha = path.opacity !== undefined ? path.opacity : 1.0;
         let strokeStyle = path.color || '#000000';
         let lineWidth = path.lineWidth || 1;
 
-        if (path.tool === AnnotationApp.TOOL_ERASER && 
-            (this.isDrawing || this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING) && 
-            path === this.currentPath) {
+        if (path.tool === AnnotationApp.TOOL_ERASER && (this.isDrawing || this.interactionState === AnnotationApp.INTERACTION_STATE_DRAWING) && path === this.currentPath) {
             strokeStyle = "rgba(200, 0, 0, 0.6)";
             lineWidth = path.lineWidth;
             alpha = 0.6;
         } else if (path.tool === AnnotationApp.TOOL_HIGHLIGHTER) {
             gco = 'darken';
         }
-        
+
         context.strokeStyle = strokeStyle;
         context.lineWidth = lineWidth;
         context.globalAlpha = alpha;
         context.globalCompositeOperation = gco;
     }
 
-    _drawPathPointsOnContext(path, context, isLivePathOnViewport) {
-        if (path.points.length === 0) return;
-        
-        const firstPoint = this._transformPointIfRequired(path.points[0], isLivePathOnViewport);
-        context.moveTo(firstPoint.x, firstPoint.y);
-        
+    _drawPathPointsOnContext(path, context, isLive) {
+        if (!path.points.length) return;
+        const first = this._transformPointIfRequired(path.points[0], isLive);
+        context.moveTo(first.x, first.y);
         for (let i = 1; i < path.points.length; i++) {
-            const point = this._transformPointIfRequired(path.points[i], isLivePathOnViewport);
-            context.lineTo(point.x, point.y);
+            const pt = this._transformPointIfRequired(path.points[i], isLive);
+            context.lineTo(pt.x, pt.y);
         }
-        
         context.stroke();
     }
 
-    _transformPointIfRequired(point, shouldTransform) {
-        if (shouldTransform) return { x: point.x - this.scrollOffsetX, y: point.y - this.scrollOffsetY };
-        return point;
+    _transformPointIfRequired(point, transform) {
+        return transform ? { x: point.x - this.scrollOffsetX, y: point.y - this.scrollOffsetY } : point;
     }
 
     selectTool(toolName) {
@@ -792,15 +695,13 @@ class AnnotationApp {
             [AnnotationApp.TOOL_HIGHLIGHTER]: this.highlighterBtn,
             [AnnotationApp.TOOL_ERASER]: this.eraserBtn
         };
-        
         for (const tool in buttons) {
             if (buttons[tool]) buttons[tool].classList.toggle("active", this.currentTool === tool);
         }
     }
 
     clearAllAnnotations() {
-        const confirmed = window.confirm("آیا مطمئن هستید که می‌خواهید تمام یادداشت‌ها و هایلایت‌ها را پاک کنید؟ این عمل قابل بازگشت نیست.");
-        if (confirmed) {
+        if (window.confirm("آیا مطمئن هستید که می‌خواهید تمام یادداشت‌ها و هایلایت‌ها را پاک کنید؟ این عمل قابل بازگشت نیست.")) {
             this.drawings = [];
             localStorage.removeItem(this.storageKey);
             this.redrawCommittedDrawings();
@@ -810,11 +711,8 @@ class AnnotationApp {
 
     saveDrawings() {
         try {
-            const drawingsToSave = this.drawings.filter(path => path.tool !== AnnotationApp.TOOL_ERASER);
-            localStorage.setItem(this.storageKey, JSON.stringify(drawingsToSave));
-        } catch (error) {
-            console.error("خطا در ذخیره‌سازی یادداشت‌ها:", error);
-        }
+            localStorage.setItem(this.storageKey, JSON.stringify(this.drawings.filter(p => p.tool !== AnnotationApp.TOOL_ERASER)));
+        } catch { }
     }
 
     loadDrawings() {
@@ -823,34 +721,23 @@ class AnnotationApp {
             try {
                 this.drawings = JSON.parse(savedData);
                 this._normalizeLoadedDrawingsProperties();
-            } catch (error) {
+            } catch {
                 this.drawings = [];
                 localStorage.removeItem(this.storageKey);
             }
-        } else {
-            this.drawings = [];
-        }
-        
+        } else this.drawings = [];
         this.redrawCommittedDrawings();
         this.renderVisibleCanvasRegion();
     }
 
     _normalizeLoadedDrawingsProperties() {
         for (const path of this.drawings) {
-            if (path.opacity === undefined) {
-                path.opacity = path.tool === AnnotationApp.TOOL_HIGHLIGHTER ? this.HIGHLIGHTER_OPACITY : 1.0;
-            }
+            if (path.opacity === undefined) path.opacity = path.tool === AnnotationApp.TOOL_HIGHLIGHTER ? this.HIGHLIGHTER_OPACITY : 1.0;
             if (path.lineWidth === undefined) {
                 switch (path.tool) {
-                    case AnnotationApp.TOOL_PEN:
-                        path.lineWidth = this.penLineWidth;
-                        break;
-                    case AnnotationApp.TOOL_HIGHLIGHTER:
-                        path.lineWidth = this.highlighterLineWidth;
-                        break;
-                    default:
-                        path.lineWidth = 1;
-                        break;
+                    case AnnotationApp.TOOL_PEN: path.lineWidth = this.penLineWidth; break;
+                    case AnnotationApp.TOOL_HIGHLIGHTER: path.lineWidth = this.highlighterLineWidth; break;
+                    default: path.lineWidth = 1; break;
                 }
             }
         }
@@ -860,7 +747,7 @@ class AnnotationApp {
         window.removeEventListener("resize", this._boundUpdateVirtualCanvas);
         window.removeEventListener("scroll", this._boundUpdateVirtualCanvas);
         this._cancelRenderFrame();
-        
+
         if (this.virtualCanvasContainer) {
             this.virtualCanvasContainer.remove();
             this.virtualCanvasContainer = null;
@@ -873,13 +760,8 @@ class AnnotationApp {
             this.masterAnnotationToggleBtn.remove();
             this.masterAnnotationToggleBtn = null;
         }
-        
-        this.targetContainer = null;
-        this.canvas = null;
-        this.ctx = null;
-        this.committedCanvas = null;
-        this.committedCtx = null;
-        this.drawings = [];
+        this.targetContainer = null; this.canvas = null; this.ctx = null;
+        this.committedCanvas = null; this.committedCtx = null; this.drawings = [];
     }
 }
 
