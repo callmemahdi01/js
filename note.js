@@ -15,6 +15,7 @@ class AnnotationApp {
         this._initializeStorageKey();
         this._initializeIcons();
         this.init();
+        this._startRenderingLoop();
     }
 
     _ensureRelativePosition() {
@@ -75,6 +76,14 @@ class AnnotationApp {
         };
     }
 
+    _startRenderingLoop() {
+        const loop = () => {
+            this.updateVirtualCanvas();
+            requestAnimationFrame(loop);
+        };
+        requestAnimationFrame(loop);
+    }
+
     init() {
         this.createVirtualCanvasContainer();
         this.createCanvases();
@@ -88,14 +97,8 @@ class AnnotationApp {
     createVirtualCanvasContainer() {
         this.virtualCanvasContainer = document.createElement("div");
         Object.assign(this.virtualCanvasContainer.style, {
-            position: "fixed",
-            top: "0",
-            left: "0",
-            width: "100vw",
-            height: "100vh",
-            pointerEvents: "none",
-            zIndex: "1000",
-            overflow: "hidden"
+            position: "fixed", top: "0", left: "0", width: "100vw", height: "100vh",
+            pointerEvents: "none", zIndex: "1000", overflow: "hidden"
         });
         document.body.appendChild(this.virtualCanvasContainer);
     }
@@ -163,15 +166,19 @@ class AnnotationApp {
         const lineWidthLabel = document.createElement("label");
         this[lineWidthContainerRefName] = document.createElement('div');
         this[lineWidthContainerRefName].className = 'line-width-slider-container';
-        this[lineWidthContainerRefName].title = `برای تغییر ضخامت ${titleSuffix}، بکشید`;
+
         const lessThanSpan = document.createElement('span');
         lessThanSpan.textContent = '<';
+
         this[lineWidthDisplayRefName] = document.createElement('span');
         this[lineWidthDisplayRefName].className = 'line-width-value-display';
         this[lineWidthDisplayRefName].textContent = this[lineWidthPropName];
+
         const greaterThanSpan = document.createElement('span');
         greaterThanSpan.textContent = '>';
+
         this[lineWidthContainerRefName].append(lessThanSpan, this[lineWidthDisplayRefName], greaterThanSpan);
+
         settingsGroup.append(colorLabel, this[colorPickerRefName], lineWidthLabel, this[lineWidthContainerRefName]);
         this.toolsPanel.appendChild(settingsGroup);
 
@@ -275,8 +282,8 @@ class AnnotationApp {
         this.totalHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, this.targetContainer.scrollHeight);
 
         const changed = old.w !== this.viewportWidth || old.h !== this.viewportHeight ||
-                        old.sx !== this.scrollOffsetX || old.sy !== this.scrollOffsetY ||
-                        old.tw !== this.totalWidth || old.th !== this.totalHeight;
+            old.sx !== this.scrollOffsetX || old.sy !== this.scrollOffsetY ||
+            old.tw !== this.totalWidth || old.th !== this.totalHeight;
         if (changed) {
             this._lastDimensions = {
                 w: this.viewportWidth, h: this.viewportHeight,
@@ -548,9 +555,9 @@ class AnnotationApp {
             if (this.currentPath.points.length > 1 || (this.currentPath.points.length === 1 && this.currentTool !== AnnotationApp.TOOL_HIGHLIGHTER)) {
                 this.drawings.push(this.currentPath);
             } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER &&
-                       this.currentPath.points.length === 2 &&
-                       this.currentPath.points[0].x === this.currentPath.points[1].x &&
-                       this.currentPath.points[0].y === this.currentPath.points[1].y) {
+                this.currentPath.points.length === 2 &&
+                this.currentPath.points[0].x === this.currentPath.points[1].x &&
+                this.currentPath.points[0].y === this.currentPath.points[1].y) {
             } else if (this.currentTool === AnnotationApp.TOOL_HIGHLIGHTER && this.currentPath.points.length > 0) {
                 this.drawings.push(this.currentPath);
             }
