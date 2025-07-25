@@ -196,7 +196,7 @@
             this.state.visibilityTimeout = setTimeout(() => {
                 this.elements.indicator.classList.remove('visible');
                 this.state.isIndicatorVisible = false;
-            }, 2000);
+            }, 1000);
         }
 
         _handleProgressClick(event) {
